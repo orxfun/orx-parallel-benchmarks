@@ -1,2 +1,3 @@
-# orx-parallel-materials
-Supplementary materials about orx-parallel repository
+# orx-parallel-benchmarks
+
+Parallel computation benchmarks.
