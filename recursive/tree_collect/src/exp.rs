@@ -29,27 +29,39 @@ fn matches(node: &Node, threshold: u64) -> bool {
     let node_value = cpu_mix(WEIGHT, node.value);
     node_value % 10_000 < threshold
 }
-fn search_seq(node: &Node, threshold: u64) -> usize {
-    usize::from(matches(node, threshold))
-        + node
-            .children
-            .iter()
-            .map(|child| search_seq(child, threshold))
-            .sum::<usize>()
+
+fn collect_seq<'a>(node: &'a Node, threshold: u64, nodes: &mut Vec<&'a Node>) {
+    if matches(node, threshold) {
+        nodes.push(node);
+    }
+    for child in &node.children {
+        collect_seq(child, threshold, nodes);
+    }
 }
-fn search_rayon(node: &Node, threshold: u64) -> usize {
-    usize::from(matches(node, threshold))
-        + node
-            .children
+
+fn collect_rayon(node: &Node, threshold: u64) -> Vec<&Node> {
+    let mut nodes = match matches(node, threshold) {
+        true => vec![node],
+        false => vec![],
+    };
+
+    nodes.extend(
+        node.children
             .par_iter()
-            .map(|child| search_rayon(child, threshold))
-            .sum::<usize>()
+            .map(|child| collect_rayon(child, threshold))
+            .reduce(Vec::new, |mut left, mut right| {
+                left.append(&mut right);
+                left
+            }),
+    );
+    nodes
 }
-fn search_orx(node: &Node, threshold: u64) -> usize {
+
+fn collect_orx(node: &Node, threshold: u64) -> Vec<&Node> {
     [node]
         .into_par_rec(|node| &node.children)
         .filter(|node| matches(node, threshold))
-        .count()
+        .collect()
 }
 
 impl Experiment for Exp {
@@ -61,6 +73,7 @@ impl Experiment for Exp {
     fn input(&mut self, input_variant: &Self::InputFactors) -> Self::Input {
         build_tree(input_variant.depth, input_variant.fan_out, 42)
     }
+
     fn execute(
         &mut self,
         input_variant: &Self::InputFactors,
@@ -68,18 +81,25 @@ impl Experiment for Exp {
         input: &Self::Input,
     ) -> Self::Output {
         match method {
-            Method::Seq => search_seq(input, input_variant.threshold),
-            Method::Rayon => search_rayon(input, input_variant.threshold),
+            Method::Seq => {
+                let mut nodes = Vec::new();
+                collect_seq(input, input_variant.threshold, &mut nodes);
+                nodes.len()
+            }
+            Method::Rayon => collect_rayon(input, input_variant.threshold).len(),
             Method::OrxOnce | Method::OrxBasic | Method::OrxRayon => {
-                search_orx(input, input_variant.threshold)
+                collect_orx(input, input_variant.threshold).len()
             }
         }
     }
+
     fn expected_output(
         &self,
         input_variant: &Self::InputFactors,
         input: &Self::Input,
     ) -> Option<Self::Output> {
-        Some(search_seq(input, input_variant.threshold))
+        let mut nodes = Vec::new();
+        collect_seq(input, input_variant.threshold, &mut nodes);
+        Some(nodes.len())
     }
 }

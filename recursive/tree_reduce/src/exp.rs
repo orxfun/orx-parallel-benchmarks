@@ -1,4 +1,4 @@
-use crate::{alg::Method, input::InputVariant};
+use crate::{WEIGHT, alg::Method, input::InputVariant};
 use bench_helper::runner::cpu_mix;
 use orx_criterion::Experiment;
 use orx_parallel::*;
@@ -11,12 +11,12 @@ pub struct Node {
     children: Vec<Node>,
 }
 
-fn build_tree(depth: usize, fanout: usize, seed: u64) -> Node {
+fn build_tree(depth: usize, fan_out: usize, seed: u64) -> Node {
     let children = if depth == 0 {
         vec![]
     } else {
-        (0..fanout)
-            .map(|index| build_tree(depth - 1, fanout, seed ^ index as u64))
+        (0..fan_out)
+            .map(|index| build_tree(depth - 1, fan_out, seed ^ index as u64))
             .collect()
     };
     Node {
@@ -26,7 +26,7 @@ fn build_tree(depth: usize, fanout: usize, seed: u64) -> Node {
 }
 
 fn work(node: &Node) -> u64 {
-    cpu_mix(8, node.value)
+    cpu_mix(WEIGHT, node.value)
 }
 fn reduce_seq(node: &Node) -> u64 {
     work(node) + node.children.iter().map(reduce_seq).sum::<u64>()
@@ -35,10 +35,7 @@ fn reduce_rayon(node: &Node) -> u64 {
     work(node) + node.children.par_iter().map(reduce_rayon).sum::<u64>()
 }
 fn reduce_orx(node: &Node) -> u64 {
-    [node]
-        .into_par_recursive(|node| &node.children)
-        .map(work)
-        .sum()
+    [node].into_par_rec(|node| &node.children).map(work).sum()
 }
 
 impl Experiment for Exp {
@@ -48,7 +45,7 @@ impl Experiment for Exp {
     type Output = u64;
 
     fn input(&mut self, input_variant: &Self::InputFactors) -> Self::Input {
-        build_tree(input_variant.depth, input_variant.fanout, 42)
+        build_tree(input_variant.depth, input_variant.fan_out, 42)
     }
     fn execute(
         &mut self,
