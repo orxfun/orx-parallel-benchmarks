@@ -36,13 +36,9 @@ impl Experiment for Exp {
         match alg_variant {
             Method::Seq => (true, run_seq(input, h)),
             Method::Rayon => (true, run_rayon(input, h, false)),
-            Method::RayonVec2 => (false, run_rayon(input, h, true)),
             Method::OrxOnce => (true, run_orx(input, h, IterationOrder::Ordered, false)),
             Method::OrxBasic => (true, run_orx(input, h, IterationOrder::Ordered, false)),
             Method::OrxRayon => (true, run_orx(input, h, IterationOrder::Ordered, false)),
-            Method::OrxOnceVec2 => (false, run_orx(input, h, IterationOrder::Ordered, true)),
-            Method::OrxBasicVec2 => (false, run_orx(input, h, IterationOrder::Ordered, true)),
-            Method::OrxRayonVec2 => (false, run_orx(input, h, IterationOrder::Ordered, true)),
         }
     }
 
