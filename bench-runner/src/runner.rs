@@ -115,6 +115,11 @@ fn run_once(
     method: &str,
 ) -> String {
     let mut cmd = command(path, warmup_runs, actual_runs, threads, method, "run");
+    Command::new("cargo")
+        .current_dir(path)
+        .arg("update")
+        .output()
+        .expect("failed to run cargo update");
     let output = cmd.output().expect("failed to run");
     String::from_utf8_lossy(&output.stdout).to_string()
 }
