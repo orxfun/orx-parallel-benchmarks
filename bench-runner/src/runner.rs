@@ -54,7 +54,7 @@ fn command(
     command
         .current_dir(path)
         .env("RAYON_NUM_THREADS", threads.to_string())
-        .env("ORX_PARALLEL_MAX_NUM_THREADS", threads.to_string());
+        .env("ORX_NUM_THREADS", threads.to_string());
 
     let mut cli_args = vec!["run".to_string(), "--release".to_string()];
 
