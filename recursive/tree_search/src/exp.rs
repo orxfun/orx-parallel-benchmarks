@@ -46,8 +46,7 @@ fn search_rayon(node: &Node, threshold: u64) -> usize {
             .sum::<usize>()
 }
 fn search_orx(node: &Node, threshold: u64) -> usize {
-    [node]
-        .into_par_rec(|node| &node.children)
+    par_recursive([node], |node| &node.children)
         .filter(|node| matches(node, threshold))
         .count()
 }

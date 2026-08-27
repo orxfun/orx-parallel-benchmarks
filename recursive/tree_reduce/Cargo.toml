@@ -14,6 +14,6 @@ rayon = { version = "1.12.0" }
 [features]
 seq = []
 rayon = []
-orx-once = []
-orx-basic = ["orx-parallel/persistent-pool"]
+orx-once = ["orx-parallel/transient-pool"]
+orx-basic = ["orx-parallel/std"]
 orx-rayon = ["orx-parallel/persistent-pool-rayon"]

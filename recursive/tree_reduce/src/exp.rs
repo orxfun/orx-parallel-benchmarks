@@ -35,7 +35,7 @@ fn reduce_rayon(node: &Node) -> u64 {
     work(node) + node.children.par_iter().map(reduce_rayon).sum::<u64>()
 }
 fn reduce_orx(node: &Node) -> u64 {
-    [node].into_par_rec(|node| &node.children).map(work).sum()
+    par_recursive([node], |node| &node.children).map(work).sum()
 }
 
 impl Experiment for Exp {

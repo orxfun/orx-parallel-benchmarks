@@ -58,8 +58,7 @@ fn collect_rayon(node: &Node, threshold: u64) -> Vec<&Node> {
 }
 
 fn collect_orx(node: &Node, threshold: u64) -> Vec<&Node> {
-    [node]
-        .into_par_rec(|node| &node.children)
+    par_recursive([node], |node| &node.children)
         .filter(|node| matches(node, threshold))
         .collect()
 }
