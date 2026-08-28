@@ -1,11 +1,10 @@
 'use strict';
 
 // ---- Configuration ----
-// TODO: will be changed to main once v4 is released
-const BRANCH = "v4";
+const BRANCH = "main";
 const BASE_RESULT_URL = 'results/';
 const CATALOG_MANIFEST_URL = `${BASE_RESULT_URL}catalog.json`;
-const BASE_CODE_URL = `https://github.com/orxfun/orx-parallel/blob/${BRANCH}/benches/`;
+const BASE_CODE_URL = `https://github.com/orxfun/orx-parallel-benchmarks/tree/${BRANCH}/`;
 const INCLUDE_ORX_RAYON = false;
 
 const CATALOG = Object.create(null);
@@ -259,7 +258,7 @@ async function loadBench(category, bench) {
 
     const resultUrl = `${BASE_RESULT_URL}${encodeURIComponent(category)}/${encodeURIComponent(bench)}.csv`;
     const sourceBench = bench.startsWith(`${category}_`) ? bench.slice(category.length + 1) : bench;
-    const codeUrl = `${BASE_CODE_URL}${encodeURIComponent(category)}/${encodeURIComponent(sourceBench)}.rs`;
+    const codeUrl = `${BASE_CODE_URL}${encodeURIComponent(category)}/${encodeURIComponent(sourceBench)}`;
 
     try {
         const resp = await fetch(resultUrl);
