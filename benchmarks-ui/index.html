@@ -28,16 +28,18 @@
             <div>
                 <h1><code>orx-parallel</code> – Benchmark Results</h1>
                 <ul>
-                    <li>The integer suffices in method names represent number of threads; eg, <code>orx-4</code> uses
-                        <code>orx-parallel</code> crate with 4 threads.
+                    <li>
+                        <code>seq</code> stands for sequential;
+                        <code>rayon</code> uses rayon's parallel iterator;
                     </li>
-                    <li>If you see a second integer suffix, it refers to the user entered chunk size.
-                        For instance, <code>orx-16-1</code> is executed with 16 threads with a fix chunk size of 1.
-                        A chunk size of 0 is the default and corresponds to auto chunk size selection.
+                    <li>
+                        <code>orx-basic</code> and <code>orx-once</code> use <code>orx-parallel</code>'s parallel
+                        iterator with persistent and transient pools, respectively.
                     </li>
-                    <li><code>seq</code> stands for sequential; <code>rayon</code> uses rayon's parallel iterator.</li>
-                    <li><code>orx</code> uses default adaptive parallel runner while <code>orx-fixed</code> uses
-                        <code>Runner::fixed</code>.
+                    <li>
+                        See the source code and benchmark runners at <a
+                            href="https://github.com/orxfun/orx-parallel-benchmarks"
+                            target="_blank">https://github.com/orxfun/orx-parallel-benchmarks</a>.
                     </li>
                 </ul>
             </div>
