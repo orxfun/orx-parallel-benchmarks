@@ -8,6 +8,8 @@
     --panel-border: #dbe3ef;
     --panel-shadow: rgba(20, 33, 61, 0.08);
     --accent: #cc3300;
+    --selected: #2563eb;
+    --selected-soft: #eff6ff;
     --button-text: #ffffff;
 }
 
@@ -21,6 +23,8 @@
         --panel: #0e1625;
         --panel-border: rgba(148, 163, 184, 0.18);
         --panel-shadow: rgba(0, 0, 0, 0.36);
+        --selected: #60a5fa;
+        --selected-soft: #172554;
     }
 }
 
@@ -49,8 +53,8 @@ body {
 .header {
     background: var(--panel);
     border: 1px solid var(--panel-border);
-    border-radius: 16px;
-    box-shadow: 0 8px 24px var(--panel-shadow);
+    border-radius: 12px;
+    box-shadow: 0 12px 28px var(--panel-shadow);
     padding: 16px 20px;
     display: flex;
     align-items: center;
@@ -60,7 +64,7 @@ body {
 .header-logo {
     width: 56px;
     height: 56px;
-    border-radius: 50%;
+    border-radius: 14px;
     object-fit: cover;
     border: 2px solid var(--panel-border);
     flex-shrink: 0;
@@ -68,7 +72,7 @@ body {
 
 .header h1 {
     margin: 0 0 4px;
-    font-size: 1.4rem;
+    font-size: 1.45rem;
     letter-spacing: 0.01em;
 }
 
@@ -97,8 +101,8 @@ li {
 .panel {
     background: var(--panel);
     border: 1px solid var(--panel-border);
-    border-radius: 16px;
-    box-shadow: 0 8px 24px var(--panel-shadow);
+    border-radius: 12px;
+    box-shadow: 0 10px 24px var(--panel-shadow);
     overflow: hidden;
 }
 
@@ -131,22 +135,24 @@ li {
     display: block;
     width: 100%;
     text-align: left;
-    padding: 7px 16px;
+    padding: 8px 16px;
     background: transparent;
     border: none;
     color: var(--ink);
     font-family: inherit;
     font-size: 0.88rem;
     cursor: pointer;
-    transition: background 100ms;
+    border-left: 3px solid transparent;
+    transition: background 140ms, border-color 140ms, color 140ms;
 }
 
 .nav-list li button:hover {
     background: var(--bg-strong);
+    border-left-color: var(--accent);
 }
 
 .nav-list li button.active {
-    background: var(--accent);
+    background: var(--selected);
     color: var(--button-text);
     font-weight: 600;
 }
@@ -161,10 +167,74 @@ li {
 
 /* ---- Links ---- */
 #link-panel {
-    display: flex;
-    flex-direction: row;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 10px;
-    padding: 12px 16px;
+    padding: 10px;
+    background: var(--panel);
+}
+
+#link-panel > div {
+    min-width: 0;
+}
+
+#link-panel a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 54px;
+    padding: 9px 12px;
+    color: var(--ink);
+    text-decoration: none;
+    border: 1px solid var(--panel-border);
+    border-radius: 8px;
+    background: var(--panel);
+    transition: transform 140ms ease, border-color 140ms ease, box-shadow 140ms ease;
+}
+
+#link-panel a:hover {
+    transform: translateY(-2px);
+    border-color: var(--accent);
+    box-shadow: 0 6px 14px var(--panel-shadow);
+}
+
+.link-icon {
+    display: grid;
+    place-items: center;
+    width: 30px;
+    height: 30px;
+    flex-shrink: 0;
+    border-radius: 7px;
+    color: var(--accent);
+    background: var(--bg-strong);
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 1.05rem;
+    font-weight: 700;
+}
+
+.link-icon-code {
+    font-size: 0.7rem;
+}
+
+#link-panel strong,
+#link-panel small {
+    display: block;
+}
+
+#link-panel strong {
+    font-size: 0.88rem;
+}
+
+#link-panel small {
+    margin-top: 2px;
+    color: var(--muted);
+    font-size: 0.72rem;
+}
+
+.link-arrow {
+    margin-left: auto;
+    color: var(--muted);
+    font-size: 1rem;
 }
 
 
@@ -202,23 +272,31 @@ li {
 .chip {
     padding: 3px 10px;
     border: 1px solid var(--panel-border);
-    border-radius: 5px;
+    border-radius: 6px;
     background: transparent;
     color: var(--ink);
     font-family: inherit;
     font-size: 0.8rem;
     cursor: pointer;
-    transition: background 100ms, color 100ms, border-color 100ms;
+    transition: background 120ms, color 120ms, border-color 120ms, transform 120ms;
 }
 
 .chip.active {
-    background: var(--accent);
-    border-color: var(--accent);
+    background: var(--selected);
+    border-color: var(--selected);
     color: var(--button-text);
 }
 
 .chip:hover:not(.active) {
     background: var(--bg-strong);
+    border-color: var(--accent);
+    transform: translateY(-1px);
+}
+
+@media (max-width: 520px) {
+    #link-panel {
+        grid-template-columns: 1fr;
+    }
 }
 
 /* ---- Chart ---- */

@@ -303,10 +303,10 @@ async function loadBench(category, bench) {
 // ---- Link ----
 function renderLink(resultUrl, codeUrl) {
     const resultLink = document.getElementById('result-link');
-    resultLink.innerHTML = `<a href="${resultUrl}" target="_blank">CSV</a>`
+    resultLink.innerHTML = `<a href="${resultUrl}" target="_blank" rel="noreferrer"><span class="link-icon" aria-hidden="true">↓</span><span><strong>CSV</strong><small>Download results</small></span><span class="link-arrow" aria-hidden="true">↗</span></a>`;
 
     const codeLink = document.getElementById('code-link');
-    codeLink.innerHTML = `<a href="${codeUrl}" target="_blank">Code</a>`
+    codeLink.innerHTML = `<a href="${codeUrl}" target="_blank" rel="noreferrer"><span class="link-icon link-icon-code" aria-hidden="true">&lt;/&gt;</span><span><strong>Code</strong><small>View benchmark source</small></span><span class="link-arrow" aria-hidden="true">↗</span></a>`;
 }
 
 
