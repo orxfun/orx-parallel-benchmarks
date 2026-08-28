@@ -33,6 +33,9 @@ impl Factors for InputVariant {
     }
 
     fn factor_levels(&self) -> Vec<String> {
-        vec![format!("2e{}", self.n), self.element_type.as_str().to_string()]
+        vec![
+            format!("2e{}", self.n),
+            self.element_type.as_str().to_string(),
+        ]
     }
 }
