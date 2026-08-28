@@ -9,7 +9,6 @@
     --panel-shadow: rgba(20, 33, 61, 0.08);
     --accent: #cc3300;
     --selected: #2563eb;
-    --selected-soft: #eff6ff;
     --button-text: #ffffff;
 }
 
@@ -24,7 +23,6 @@
         --panel-border: rgba(148, 163, 184, 0.18);
         --panel-shadow: rgba(0, 0, 0, 0.36);
         --selected: #60a5fa;
-        --selected-soft: #172554;
     }
 }
 
@@ -174,7 +172,7 @@ li {
     background: var(--panel);
 }
 
-#link-panel > div {
+#link-panel>div {
     min-width: 0;
 }
 
