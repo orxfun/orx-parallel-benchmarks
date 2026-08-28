@@ -9,8 +9,8 @@ use clap::Parser;
 fn main() {
     let args = BenchArgs::parse();
 
-    let num_items = [50, 100];
-    let population_sizes = [10_000, 50_000];
+    let num_items = [25, 100];
+    let population_sizes = [5_000, 20_000];
     let heavy = [false, true];
 
     let for_items_pop = |num_items, population_size| {
