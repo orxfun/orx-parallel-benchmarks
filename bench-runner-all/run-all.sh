@@ -1,6 +1,6 @@
 cargo run --release -- \
     --path .. \
-    --path-result ../../benchmarks-ui/results/ \
+    --path-result ../benchmarks-ui/results/ \
     --warmup-runs 20 \
     --actual-runs 100 \
     --threads 4 \
