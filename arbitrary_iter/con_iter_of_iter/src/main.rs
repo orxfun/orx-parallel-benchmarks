@@ -17,7 +17,6 @@ fn main() {
         ComputeType::Medium,
         ComputeType::Heavy,
         ComputeType::Variable,
-        ComputeType::Alloc,
     ];
     let pipelines = [PipelineType::FilterMap, PipelineType::Map];
 

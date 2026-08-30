@@ -12,9 +12,6 @@ pub enum ComputeType {
     /// Variable/skewed workload (mix of fast and heavy items).
     /// Tests dynamic work distribution and load balancing.
     Variable,
-    /// Allocates heap structures (String and nested Vecs).
-    /// Tests memory allocation and pointer moves across threads.
-    Alloc,
 }
 
 impl ComputeType {
@@ -24,7 +21,6 @@ impl ComputeType {
             Self::Medium => "medium",
             Self::Heavy => "heavy",
             Self::Variable => "variable",
-            Self::Alloc => "alloc",
         }
     }
 }

@@ -34,69 +34,6 @@ pub fn merge(a: Agg, b: Agg) -> Agg {
 }
 
 // ---------------------------------------------------------------------------
-// Large / Allocating Output (mirrors benches/con_iter_of_iter.rs)
-// ---------------------------------------------------------------------------
-
-const NUM_NUMBERS: usize = 4;
-const NUM_VECTORS: usize = 4;
-const LEN_VECTORS: usize = 4;
-
-#[derive(Clone, Debug)]
-pub struct LargeOutput {
-    name: String,
-    numbers: [i64; NUM_NUMBERS],
-    vectors: Vec<Vec<i64>>,
-}
-
-fn compute_alloc(val: u64) -> LargeOutput {
-    let idx = val as usize;
-    let prefix = match idx % 7 {
-        0 => "zero-",
-        3 => "three-",
-        _ => "sth-",
-    };
-    let fib_val = bench_helper::runner::fib(50, val);
-    let name = format!("{}-fib-{}", prefix, fib_val);
-
-    let mut numbers = [0i64; NUM_NUMBERS];
-    for (i, x) in numbers.iter_mut().enumerate() {
-        *x = match (idx * 7 + i) % 3 {
-            0 => idx as i64 + i as i64,
-            _ => idx as i64 - i as i64,
-        };
-    }
-
-    let mut vectors = Vec::with_capacity(NUM_VECTORS);
-    for i in 0..NUM_VECTORS {
-        let mut vec = Vec::with_capacity(LEN_VECTORS);
-        for j in 0..(idx % LEN_VECTORS) {
-            vec.push(idx as i64 - i as i64 + j as i64);
-        }
-        vectors.push(vec);
-    }
-
-    LargeOutput {
-        name,
-        numbers,
-        vectors,
-    }
-}
-
-fn large_output_to_hash(out: &LargeOutput) -> u64 {
-    let mut h = out.name.len() as u64;
-    for &num in &out.numbers {
-        h = h.wrapping_mul(0x9E37_79B9_7F4A_7C15).wrapping_add(num as u64);
-    }
-    for vec in &out.vectors {
-        h ^= vec.len() as u64;
-        for &v in vec {
-            h = h.rotate_left(5) ^ (v as u64);
-        }
-    }
-    h
-}
-
-// ---------------------------------------------------------------------------
 // Compute functions per item
 // ---------------------------------------------------------------------------
 
@@ -132,10 +69,6 @@ fn apply_compute(compute_type: ComputeType, val: u64) -> u64 {
         ComputeType::Medium => compute_medium(val),
         ComputeType::Heavy => compute_heavy(val),
         ComputeType::Variable => compute_variable(val),
-        ComputeType::Alloc => {
-            let out = compute_alloc(val);
-            large_output_to_hash(&out)
-        }
     }
 }
 
