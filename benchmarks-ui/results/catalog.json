@@ -6,6 +6,7 @@
     "tsp_two_opt"
   ],
   "arbitrary_iter": [
+    "con_iter_of_iter",
     "generic_iter",
     "map_set_processing"
   ],
