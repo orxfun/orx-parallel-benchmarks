@@ -4,7 +4,7 @@ use orx_criterion::Experiment;
 use orx_parallel::IterationOrder;
 use rand::{RngExt, SeedableRng};
 use rand_chacha::ChaCha8Rng;
-use std::{collections::LinkedList, hint::black_box};
+use std::hint::black_box;
 
 const FIB_UPPER_BOUND: u64 = 99;
 
@@ -35,10 +35,10 @@ impl Experiment for Exp {
         let h = input_variant.heavy;
         match alg_variant {
             Method::Seq => (true, run_seq(input, h)),
-            Method::Rayon => (true, run_rayon(input, h, false)),
-            Method::OrxOnce => (true, run_orx(input, h, IterationOrder::Ordered, false)),
-            Method::OrxBasic => (true, run_orx(input, h, IterationOrder::Ordered, false)),
-            Method::OrxRayon => (true, run_orx(input, h, IterationOrder::Ordered, false)),
+            Method::Rayon => (true, run_rayon(input, h)),
+            Method::OrxOnce => (true, run_orx(input, h, IterationOrder::Ordered)),
+            Method::OrxBasic => (true, run_orx(input, h, IterationOrder::Ordered)),
+            Method::OrxRayon => (true, run_orx(input, h, IterationOrder::Ordered)),
         }
     }
 
@@ -50,7 +50,6 @@ impl Experiment for Exp {
     ) {
         let mut expected = match run_seq(input, input_variant.heavy) {
             Output::Vec(vec) => vec,
-            _ => unreachable!(),
         };
 
         if !*ordered {
@@ -66,18 +65,6 @@ impl Experiment for Exp {
                 }
                 true => assert_eq!(&expected, result),
             },
-            Output::VecList(result) => {
-                assert!(!*ordered);
-                let mut result: Vec<u64> = result.iter().flat_map(|x| x.iter()).copied().collect();
-                result.sort();
-                assert_eq!(expected, result);
-            }
-            Output::VecVec(result) => {
-                assert!(!*ordered);
-                let mut result: Vec<u64> = result.iter().flat_map(|x| x.iter()).copied().collect();
-                result.sort();
-                assert_eq!(expected, result);
-            }
         }
     }
 }
@@ -85,8 +72,6 @@ impl Experiment for Exp {
 #[derive(Debug, PartialEq)]
 pub enum Output {
     Vec(Vec<u64>),
-    VecList(LinkedList<Vec<u64>>),
-    VecVec(Vec<Vec<u64>>),
 }
 
 fn f(a: &&u64) -> bool {
@@ -150,10 +135,10 @@ fn run_seq(input: &[u64], heavy: bool) -> Output {
     }
 }
 
-fn run_rayon(input: &[u64], heavy: bool, list: bool) -> Output {
+fn run_rayon(input: &[u64], heavy: bool) -> Output {
     use rayon::prelude::*;
-    match (heavy, list) {
-        (true, false) => Output::Vec(
+    match heavy {
+        true => Output::Vec(
             input
                 .into_par_iter()
                 .filter(f)
@@ -162,16 +147,7 @@ fn run_rayon(input: &[u64], heavy: bool, list: bool) -> Output {
                 .filter_map(fm)
                 .collect(),
         ),
-        (true, true) => Output::VecList(
-            input
-                .into_par_iter()
-                .filter(f)
-                .map(h_m)
-                .flat_map_iter(fl)
-                .filter_map(fm)
-                .collect_vec_list(),
-        ),
-        (false, false) => Output::Vec(
+        false => Output::Vec(
             input
                 .into_par_iter()
                 .filter(f)
@@ -179,40 +155,15 @@ fn run_rayon(input: &[u64], heavy: bool, list: bool) -> Output {
                 .flat_map_iter(fl)
                 .filter_map(fm)
                 .collect(),
-        ),
-        (false, true) => Output::VecList(
-            input
-                .into_par_iter()
-                .filter(f)
-                .map(l_m)
-                .flat_map_iter(fl)
-                .filter_map(fm)
-                .collect_vec_list(),
         ),
     }
 }
 
-fn run_orx(input: &[u64], heavy: bool, ord: IterationOrder, list: bool) -> Output {
+fn run_orx(input: &[u64], heavy: bool, ord: IterationOrder) -> Output {
     use orx_parallel::*;
     let par = input.into_par().iteration_order(ord);
-    match (heavy, list) {
-        (true, false) => Output::Vec(par.filter(f).map(h_m).flat_map(fl).filter_map(fm).collect()),
-        (true, true) => Output::VecVec(
-            par.filter(f)
-                .map(h_m)
-                .flat_map(fl)
-                .filter_map(fm)
-                .collect::<Vec2<_>>()
-                .into(),
-        ),
-        (false, false) => Output::Vec(par.filter(f).map(l_m).flat_map(fl).filter_map(fm).collect()),
-        (false, true) => Output::VecVec(
-            par.filter(f)
-                .map(l_m)
-                .flat_map(fl)
-                .filter_map(fm)
-                .collect::<Vec2<_>>()
-                .into(),
-        ),
+    match heavy {
+        true => Output::Vec(par.filter(f).map(h_m).flat_map(fl).filter_map(fm).collect()),
+        false => Output::Vec(par.filter(f).map(l_m).flat_map(fl).filter_map(fm).collect()),
     }
 }
