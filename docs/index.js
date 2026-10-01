@@ -129,6 +129,10 @@ function isNumericValue(value) {
 }
 
 function sortFilterValues(col, values) {
+    if (values.includes('never')) {
+        return ['never', ...sortFilterValues(col, values.filter(value => value !== 'never'))];
+    }
+
     if (col === 'method') {
         return sortMethods(values);
     }
