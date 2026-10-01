@@ -89,7 +89,8 @@ async function loadCatalog() {
 
         renderCategories();
         if (categories.length > 0) {
-            selectCategory(categories[0]);
+            const hasDefaultBench = CATALOG.collect?.includes('map');
+            selectCategory(hasDefaultBench ? 'collect' : categories[0], hasDefaultBench ? 'map' : undefined);
         } else {
             setEmptyMsg('No benchmark categories found.');
         }
@@ -233,7 +234,7 @@ function renderBenches() {
     }
 }
 
-function selectCategory(cat) {
+function selectCategory(cat, initialBench) {
     state.category = cat;
     state.bench = null;
     renderCategories();
@@ -241,7 +242,7 @@ function selectCategory(cat) {
     // Auto-select the first benchmark in the new category
     const benches = CATALOG[cat];
     if (benches && benches.length > 0) {
-        selectBench(benches[0]);
+        selectBench(initialBench || benches[0]);
     }
 }
 
