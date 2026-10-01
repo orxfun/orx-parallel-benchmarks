@@ -141,7 +141,7 @@ function sortFilterValues(col, values) {
         return [...values].sort((a, b) => {
             const na = Number(a);
             const nb = Number(b);
-            return nb - na;
+            return col === 'n' ? na - nb : nb - na;
         });
     }
 
