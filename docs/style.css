@@ -98,7 +98,7 @@ li {
         min-width: 0;
     }
 
-    .sidebar > .panel,
+    .sidebar>.panel,
     .nav-list {
         min-width: 0;
     }
